@@ -21,6 +21,7 @@
       <input id="userIDDestination" autocomplete="off" placeholder="userID Destination" />
       <input id="theMessage" autocomplete="off" placeholder="The Message" />
       <input id="delay" autocomplete="off" placeholder="the delay before the message is sent" />
+      <input id="username" name="username" type="hidden" value="{{ Session::get('username'); }}">
       <button>Send</button>
     </form>
 
@@ -109,7 +110,8 @@
           'command': 'private message FROM CLIENT',
           'userIDDestination': $('#userIDDestination').val(),
           'theMessage': $('#theMessage').val(),
-          'delay': $('#delay').val()
+          'delay': $('#delay').val(),
+          'username': $('#username').val()
         };
 
         var destinationPHPPage = $(this).prop('action');
@@ -142,8 +144,12 @@
       });
 
       // Listen to server
-      socket.on('private message FROM SERVER', function(destination, msg, delay) {
-        $('#messages').append($('<li>').text('user with ID of ' + destination + ' got a message. The content is: ' + msg + ' , delay is: ' + delay));
+      socket.on('private message FROM SERVER', function(destination, msg, delay, username) {
+        if(username == null || username == '') {
+          $('#messages').append($('<li>').text('user with ID of ' + destination + ' got a message. The content is: ' + msg + ' , delay is: ' + delay+ ' . It was sent by guest'));
+        } else {
+          $('#messages').append($('<li>').text('user with ID of ' + destination + ' got a message. The content is: ' + msg + ' , delay is: ' + delay + ' . It was sent by ' + username));
+        }
       });
 
     </script>

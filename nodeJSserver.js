@@ -43,17 +43,21 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('private message FROM CLIENT', function (data) {
-
-		console.log('UserID ' + socket.id + ' wanted to send message to ' + data.userIDDestination + ' , the content is ' + data.theMessage + ' , delay is ' + data.delay);
+		if(data.username != null || data.username != '') {
+			console.log('Username: ' + data.username + ' UserID ' + socket.id + ' wanted to send message to ' + data.userIDDestination + ' , the content is ' + data.theMessage + ' , delay is ' + data.delay);
+		} else {
+			console.log('UserID ' + socket.id + ' wanted to send message to ' + data.userIDDestination + ' , the content is ' + data.theMessage + ' , delay is ' + data.delay);
+		}
+		
 		
 		// SEND data to ONLY one CLIENT
 		if(data.delay == 0 || data.delay == null) {
 			setTimeout(function(){
-				io.to(data.userIDDestination).emit('private message FROM SERVER', data.userIDDestination, data.theMessage, 0);
+				io.to(data.userIDDestination).emit('private message FROM SERVER', data.userIDDestination, data.theMessage, 0, data.username);
 			}, 0);
 		} else {
 			setTimeout(function(){
-				io.to(data.userIDDestination).emit('private message FROM SERVER', data.userIDDestination, data.theMessage, data.delay);
+				io.to(data.userIDDestination).emit('private message FROM SERVER', data.userIDDestination, data.theMessage, data.delay, data.username);
 			}, data.delay * 1000);
 		}
 
